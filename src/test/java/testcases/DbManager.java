@@ -13,7 +13,7 @@ public class DbManager {
 
 	private static Connection con = null;
 
-	public static void setOracleDbConnection() {
+	public static void setOracleDbConnection() throws SQLException, ClassNotFoundException {
 
 		try {
 
@@ -33,56 +33,90 @@ public class DbManager {
 
 	}
 
-//	public static List<String> getOracleQuery(String qry) throws SQLException{
-//		
-//		Statement st=con.createStatement();
-//		ResultSet rs=st.executeQuery(qry);
-//		List<String> values=new ArrayList<String>();
-//		while(rs.next()) {
-//			
-//			values.add(rs.getString(1));
-//			
-//		}
-//		return values;
-//	}
+	public static void getOracleQuery(String qry1, String qry2) throws SQLException, ClassNotFoundException {
 
-	public static void getOracleQuery(String qry1, String qry2) throws SQLException {
+		int qry1_number_of_columns = 1;
+		int qry2_number_of_columns = 1;
+		char indicator1=' ';
+		char indicator2=' ';
+		try {
+			for (int i = 0; i < qry1.indexOf("from"); i++) {
+				if (qry1.charAt(i) == ',') {
+					qry1_number_of_columns++;
+				}
+				else if(qry1.charAt(i) == '*') {
+					indicator1='*';
+				}
 
-		Statement st1 = con.createStatement();
-		ResultSet rs1 = st1.executeQuery(qry1);
-		List<String> values1 = new ArrayList<String>();
-		Statement st2 = con.createStatement();
-		ResultSet rs2 = st2.executeQuery(qry2);
-		List<String> values2 = new ArrayList<String>();
-		while (rs1.next()) {
-
-			values1.add(rs1.getString(1) + " | " + rs1.getString(2) + " | " + rs1.getString(3) + " | "
-					+ rs1.getString(4) + " | " + rs1.getString(5));
-
-		}
-		while (rs2.next()) {
-
-			values2.add(rs2.getString(1) + " | " + rs2.getString(2) + " | " + rs2.getString(3) + " | "
-					+ rs2.getString(4) + " | " + rs2.getString(5));
-
-		}
-
-		Iterator<String> itr1 = values1.iterator();
-		Iterator<String> itr2 = values2.iterator();
-
-		int i = 0;
-		String val1;
-		String val2;
-		while (itr1.hasNext()) {
-			i++;
-			val1 = itr1.next();
-			val2 = itr2.next();
-			if (!val1.contentEquals(val2)) {
-				System.out.println("Mismatch occured in record : " + i);
-				System.out.println("Source : " + val1 + "     " + "Target : " + val2);
+			}
+			for (int i = 0; i < qry2.indexOf("from"); i++) {
+				if (qry2.charAt(i) == ',') {
+					qry2_number_of_columns++;
+				}
+				else if(qry2.charAt(i) == '*') {
+					indicator2='*';
+				}
+			}
+			if (qry1_number_of_columns != qry2_number_of_columns) {
+				System.out.println("Number of columns mismatch");
+				return;
+			}
+			else if (indicator1=='*' || indicator2=='*')
+			{
+				System.out.println("Please provide exact column names in queries");
+				return;
 			}
 
-		}
+			Statement st1 = con.createStatement();
+			ResultSet rs1 = st1.executeQuery(qry1);
+			List<String> values1 = new ArrayList<String>();
+			Statement st2 = con.createStatement();
+			ResultSet rs2 = st2.executeQuery(qry2);
+			List<String> values2 = new ArrayList<String>();
+			String qry1_record = null;
+			String qry2_record = null;
+			while (rs1.next()) {
+				qry1_record = rs1.getString(1);
+				for (int i = 1; i < qry1_number_of_columns; i++) {
+					qry1_record = qry1_record + " | " + rs1.getString(i + 1);
+				}
 
+				values1.add(qry1_record);
+
+			}
+			while (rs2.next()) {
+
+				qry2_record = rs2.getString(1);
+				for (int i = 1; i < qry2_number_of_columns; i++) {
+					qry2_record = qry2_record + " | " + rs2.getString(i + 1);
+				}
+
+				values2.add(qry2_record);
+
+			}
+
+			Iterator<String> itr1 = values1.iterator();
+			Iterator<String> itr2 = values2.iterator();
+
+			int i = 0, count = 0;
+			String val1;
+			String val2;
+			while (itr1.hasNext()) {
+				i++;
+				val1 = itr1.next();
+				val2 = itr2.next();
+				if (!val1.contentEquals(val2)) {
+					System.out.println("Mismatch occured in record : " + i);
+					System.out.println("Source : " + val1 + "     " + "Target : " + val2);
+					count++;
+				}
+
+			}
+			if (count == 0) {
+				System.out.println("Source and Target tables data matches");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }
