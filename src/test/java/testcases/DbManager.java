@@ -33,38 +33,35 @@ public class DbManager {
 
 	}
 
-	public static void getOracleQuery(String qry1, String qry2) throws SQLException, ClassNotFoundException {
+	public static String getOracleQuery(String qry1, String qry2) throws SQLException, ClassNotFoundException {
 
 		int qry1_number_of_columns = 1;
 		int qry2_number_of_columns = 1;
-		char indicator1=' ';
-		char indicator2=' ';
+		char indicator1 = ' ';
+		char indicator2 = ' ';
+		String return_stmt;
 		try {
 			for (int i = 0; i < qry1.indexOf("from"); i++) {
 				if (qry1.charAt(i) == ',') {
 					qry1_number_of_columns++;
-				}
-				else if(qry1.charAt(i) == '*') {
-					indicator1='*';
+				} else if (qry1.charAt(i) == '*') {
+					indicator1 = '*';
 				}
 
 			}
 			for (int i = 0; i < qry2.indexOf("from"); i++) {
 				if (qry2.charAt(i) == ',') {
 					qry2_number_of_columns++;
-				}
-				else if(qry2.charAt(i) == '*') {
-					indicator2='*';
+				} else if (qry2.charAt(i) == '*') {
+					indicator2 = '*';
 				}
 			}
 			if (qry1_number_of_columns != qry2_number_of_columns) {
 				System.out.println("Number of columns mismatch");
-				return;
-			}
-			else if (indicator1=='*' || indicator2=='*')
-			{
+				return "Number of columns mismatch";
+			} else if (indicator1 == '*' || indicator2 == '*') {
 				System.out.println("Please provide exact column names in queries");
-				return;
+				return "Please provide exact column names in queries";
 			}
 
 			Statement st1 = con.createStatement();
@@ -107,16 +104,23 @@ public class DbManager {
 				val2 = itr2.next();
 				if (!val1.contentEquals(val2)) {
 					System.out.println("Mismatch occured in record : " + i);
-					System.out.println("Source : " + val1 + "     " + "Target : " + val2);
+					System.out.println("Source : " + val1 + "     \n" + "Target : " + val2);
 					count++;
 				}
 
 			}
 			if (count == 0) {
 				System.out.println("Source and Target tables data matches");
+				return_stmt = "Source and Target tables data matches";
+			} else {
+				System.out.println("\nTotal mismatched records : " + count);
+				return_stmt = "Total mismatched records : " + count;
 			}
+
 		} catch (Exception e) {
 			e.printStackTrace();
+			return e.getMessage();
 		}
+		return return_stmt;
 	}
 }
