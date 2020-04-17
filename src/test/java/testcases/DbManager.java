@@ -12,6 +12,7 @@ import java.util.List;
 public class DbManager {
 
 	private static Connection con = null;
+	private static Connection mysqlcon = null;
 
 	public static void setOracleDbConnection() throws SQLException, ClassNotFoundException {
 
@@ -33,48 +34,50 @@ public class DbManager {
 
 	}
 
-	public static String getOracleQuery(String qry1, String qry2) throws SQLException, ClassNotFoundException {
+	public static void setMysqlDbConnection() throws SQLException, ClassNotFoundException {
 
-		int qry1_number_of_columns = 1;
-		int qry2_number_of_columns = 1;
-		char indicator1 = ' ';
-		char indicator2 = ' ';
+		try {
+
+			Class.forName(TestConfig.mysqlDriver);
+			mysqlcon = DriverManager.getConnection(TestConfig.mysqlUrl, TestConfig.mysqlUsername,
+					TestConfig.mysqlPassword);
+			if (!mysqlcon.isClosed()) {
+				System.out.println("Successfully connected to mysql server");
+			}
+
+		}
+
+		catch (Exception e) {
+
+			System.err.println("Can't connect to mysql server");
+		}
+
+	}
+
+	public static String dataCompare(String qry1, String qry2) throws SQLException, ClassNotFoundException {
+
 		String return_stmt;
 		try {
-			for (int i = 0; i < qry1.indexOf("from"); i++) {
-				if (qry1.charAt(i) == ',') {
-					qry1_number_of_columns++;
-				} else if (qry1.charAt(i) == '*') {
-					indicator1 = '*';
-				}
-
-			}
-			for (int i = 0; i < qry2.indexOf("from"); i++) {
-				if (qry2.charAt(i) == ',') {
-					qry2_number_of_columns++;
-				} else if (qry2.charAt(i) == '*') {
-					indicator2 = '*';
-				}
-			}
-			if (qry1_number_of_columns != qry2_number_of_columns) {
-				System.out.println("Number of columns mismatch");
-				return "Number of columns mismatch";
-			} else if (indicator1 == '*' || indicator2 == '*') {
-				System.out.println("Please provide exact column names in queries");
-				return "Please provide exact column names in queries";
-			}
 
 			Statement st1 = con.createStatement();
 			ResultSet rs1 = st1.executeQuery(qry1);
 			List<String> values1 = new ArrayList<String>();
-			Statement st2 = con.createStatement();
+			Statement st2 = mysqlcon.createStatement();
 			ResultSet rs2 = st2.executeQuery(qry2);
+
+			if (rs1.getMetaData().getColumnCount() != rs2.getMetaData().getColumnCount()) {
+
+				System.out.println("Number of columns mismatch");
+				return "Number of columns mismatch";
+
+			}
+
 			List<String> values2 = new ArrayList<String>();
 			String qry1_record = null;
 			String qry2_record = null;
 			while (rs1.next()) {
 				qry1_record = rs1.getString(1);
-				for (int i = 1; i < qry1_number_of_columns; i++) {
+				for (int i = 1; i < rs1.getMetaData().getColumnCount(); i++) {
 					qry1_record = qry1_record + " | " + rs1.getString(i + 1);
 				}
 
@@ -82,9 +85,8 @@ public class DbManager {
 
 			}
 			while (rs2.next()) {
-
 				qry2_record = rs2.getString(1);
-				for (int i = 1; i < qry2_number_of_columns; i++) {
+				for (int i = 1; i < rs2.getMetaData().getColumnCount(); i++) {
 					qry2_record = qry2_record + " | " + rs2.getString(i + 1);
 				}
 

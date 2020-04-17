@@ -40,28 +40,28 @@ public class DCToolFrame extends JFrame implements ActionListener {
 		title.setLocation(300, 30);
 		c.add(title);
 
-		source_sql = new JLabel("Source SQL : ");
+		source_sql = new JLabel("Source (Oracle) SQL : ");
 		source_sql.setFont(new Font("Arial", Font.PLAIN, 15));
-		source_sql.setSize(150, 40);
+		source_sql.setSize(200, 40);
 		source_sql.setLocation(100, 100);
 		c.add(source_sql);
 
 		t_source_sql = new JTextField();
 		t_source_sql.setFont(new Font("Arial", Font.PLAIN, 15));
 		t_source_sql.setSize(500, 40);
-		t_source_sql.setLocation(200, 100);
+		t_source_sql.setLocation(200, 140);
 		c.add(t_source_sql);
 
-		target_sql = new JLabel("Target SQL : ");
+		target_sql = new JLabel("Target (MySQL) SQL : ");
 		target_sql.setFont(new Font("Arial", Font.PLAIN, 15));
-		target_sql.setSize(150, 40);
+		target_sql.setSize(200, 40);
 		target_sql.setLocation(100, 200);
 		c.add(target_sql);
 
 		t_target_sql = new JTextField();
 		t_target_sql.setFont(new Font("Arial", Font.PLAIN, 15));
 		t_target_sql.setSize(500, 40);
-		t_target_sql.setLocation(200, 200);
+		t_target_sql.setLocation(200, 240);
 		c.add(t_target_sql);
 
 		submit = new JButton("Submit");
@@ -92,7 +92,7 @@ public class DCToolFrame extends JFrame implements ActionListener {
 		if (e.getSource() == submit) {
 
 			try {
-				result.setText(DbManager.getOracleQuery(t_source_sql.getText(), t_target_sql.getText()));
+				result.setText(DbManager.dataCompare(t_source_sql.getText(), t_target_sql.getText()));
 			} catch (ClassNotFoundException e1) {
 
 				e1.printStackTrace();
