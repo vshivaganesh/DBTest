@@ -100,20 +100,20 @@ public class DbManager {
 
 			Statement st1 = sourcecon.createStatement();
 			ResultSet rs1 = st1.executeQuery(qry1);
-			List<String> values1 = new ArrayList<String>();
+
 			Statement st2 = targetcon.createStatement();
 			ResultSet rs2 = st2.executeQuery(qry2);
-
-			System.out.println("Source table column count : " + rs1.getMetaData().getColumnCount());
-			System.out.println("Target table column count : " + rs2.getMetaData().getColumnCount());
 
 			if (rs1.getMetaData().getColumnCount() != rs2.getMetaData().getColumnCount()) {
 
 				System.out.println("Number of columns mismatch");
-				return "Number of columns mismatch";
+				return "Number of columns mismatch" + "\n" + "Source table column count : "
+						+ rs1.getMetaData().getColumnCount() + "\t" + "Target table column count : "
+						+ rs2.getMetaData().getColumnCount();
 
 			}
 
+			List<String> values1 = new ArrayList<String>();
 			List<String> values2 = new ArrayList<String>();
 			String qry1_record = null;
 			String qry2_record = null;
@@ -136,6 +136,15 @@ public class DbManager {
 
 			}
 
+			String source_table_records = "Source record count : " + values1.size();
+			String target_table_records = "Target record count : " + values2.size();
+
+			if (values1.size() > values2.size())
+				System.out.println(values1.size() - values2.size() + " Records are more in Source Table");
+
+			if (values1.size() < values2.size())
+				System.out.println(values2.size() - values1.size() + " Records are more in Target Table");
+
 			Iterator<String> itr1 = values1.iterator();
 			Iterator<String> itr2 = values2.iterator();
 
@@ -146,25 +155,32 @@ public class DbManager {
 				i++;
 				val1 = itr1.next();
 				val2 = itr2.next();
+
 				if (!val1.contentEquals(val2)) {
-					System.out.println("Mismatch occured in record : " + i);
+					System.out.println("\nMismatch occured in record : " + i);
 					System.out.println("Source : " + val1 + "     \n" + "Target : " + val2);
 					count++;
 				}
 
+				if (i == values2.size() || i == values1.size()) {
+					break;
+				}
+
 			}
 			if (count == 0) {
-				System.out.println("Source and Target tables data matches");
-				return_stmt = "Source and Target tables data matches";
+				return_stmt = "Source and Target tables data matches" + "\n" + source_table_records + "\t"
+						+ target_table_records;
 			} else {
-				System.out.println("\nTotal mismatched records : " + count);
-				return_stmt = "Total mismatched records : " + count;
+
+				return_stmt = "Total mismatched records : " + count + "\n" + source_table_records + "\t"
+						+ target_table_records;
 			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
 			return e.getMessage();
 		}
+		System.out.println(return_stmt);
 		return return_stmt;
 	}
 }

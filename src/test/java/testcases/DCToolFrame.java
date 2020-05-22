@@ -26,7 +26,8 @@ public class DCToolFrame extends JFrame implements ActionListener {
 	private JTextField t_target_sql;
 	private JButton submit;
 	private JButton reset;
-	private JLabel result;
+	private JLabel result_label;
+	private JTextArea result_actual;
 	private String[] db = { "Oracle", "MySql", "Snowflake" };
 
 	public DCToolFrame() {
@@ -60,58 +61,65 @@ public class DCToolFrame extends JFrame implements ActionListener {
 		source_sql = new JLabel("Source SQL : ");
 		source_sql.setFont(new Font("Arial", Font.PLAIN, 15));
 		source_sql.setSize(100, 20);
-		source_sql.setLocation(100, 125);
+		source_sql.setLocation(100, 120);
 		c.add(source_sql);
 
 		t_source_sql = new JTextField();
 		t_source_sql.setFont(new Font("Arial", Font.PLAIN, 15));
 		t_source_sql.setSize(500, 20);
-		t_source_sql.setLocation(200, 125);
+		t_source_sql.setLocation(200, 120);
 		c.add(t_source_sql);
 
 		target_db = new JLabel("Target DB : ");
 		target_db.setFont(new Font("Arial", Font.PLAIN, 15));
 		target_db.setSize(100, 20);
-		target_db.setLocation(100, 190);
+		target_db.setLocation(100, 160);
 		c.add(target_db);
 
 		c_target_db = new JComboBox<String>(db);
 		c_target_db.setFont(new Font("Arial", Font.PLAIN, 15));
 		c_target_db.setSize(100, 20);
-		c_target_db.setLocation(200, 190);
+		c_target_db.setLocation(200, 160);
 		c.add(c_target_db);
 
 		target_sql = new JLabel("Target SQL : ");
 		target_sql.setFont(new Font("Arial", Font.PLAIN, 15));
 		target_sql.setSize(100, 20);
-		target_sql.setLocation(100, 225);
+		target_sql.setLocation(100, 190);
 		c.add(target_sql);
 
 		t_target_sql = new JTextField();
 		t_target_sql.setFont(new Font("Arial", Font.PLAIN, 15));
 		t_target_sql.setSize(500, 20);
-		t_target_sql.setLocation(200, 225);
+		t_target_sql.setLocation(200, 190);
 		c.add(t_target_sql);
 
 		submit = new JButton("Submit");
 		submit.setFont(new Font("Arial", Font.PLAIN, 15));
 		submit.setSize(100, 20);
-		submit.setLocation(300, 300);
+		submit.setLocation(300, 240);
 		submit.addActionListener(this);
 		c.add(submit);
 
 		reset = new JButton("Reset");
 		reset.setFont(new Font("Arial", Font.PLAIN, 15));
 		reset.setSize(100, 20);
-		reset.setLocation(450, 300);
+		reset.setLocation(450, 240);
 		reset.addActionListener(this);
 		c.add(reset);
+		
+		result_label = new JLabel("Result : ");
+		result_label.setFont(new Font("Arial", Font.BOLD, 20));
+		result_label.setSize(100, 20);
+		result_label.setLocation(100, 290);
+		c.add(result_label);
 
-		result = new JLabel("");
-		result.setFont(new Font("Arial", Font.BOLD, 20));
-		result.setSize(700, 30);
-		result.setLocation(100, 400);
-		c.add(result);
+		result_actual = new JTextArea("");
+		result_actual.setFont(new Font("Calibri", Font.PLAIN, 15));
+		result_actual.setSize(500, 40);
+		result_actual.setLocation(100, 340);
+		result_actual.setEditable(false);
+		c.add(result_actual);
 
 		setVisible(true);
 	}
@@ -122,7 +130,7 @@ public class DCToolFrame extends JFrame implements ActionListener {
 
 			try {
 				DbDecide.dbSelect((String) c_source_db.getSelectedItem(), (String) c_target_db.getSelectedItem());
-				result.setText(DbManager.dataCompare(t_source_sql.getText(), t_target_sql.getText()));
+				result_actual.setText(DbManager.dataCompare(t_source_sql.getText(), t_target_sql.getText()));
 			} catch (ClassNotFoundException e1) {
 
 				e1.printStackTrace();
