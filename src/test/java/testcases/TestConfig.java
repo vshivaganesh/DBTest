@@ -11,5 +11,10 @@ public class TestConfig {
 	public static String mysqlUrl = "jdbc:mysql://localhost:3306/mysqlpractice";
 	public static String mysqlUsername = "ganesh";
 	public static String mysqlPassword = "mysql2020";
-	
+
+	public static String snowflakeDriver = "net.snowflake.client.jdbc.SnowflakeDriver";
+	public static String snowflakeUrl = "jdbc:snowflake://TNA73155.us-east-1.snowflakecomputing.com/";
+	public static String snowflakeUsername = "SFADMINUSER";
+	public static String snowflakePassword = "Wilmington4";
+
 }
