@@ -1,11 +1,17 @@
 package testcases;
 
-import java.awt.*;
+import java.awt.Container;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 
 public class DCToolFrame extends JFrame implements ActionListener {
 
@@ -28,12 +34,18 @@ public class DCToolFrame extends JFrame implements ActionListener {
 	private JButton reset;
 	private JLabel result_label;
 	private JTextArea result_actual;
-	private String[] db = { "Oracle", "MySql", "Snowflake" };
+	private String[] db = { "Snowflake", "Oracle", "MySql" };
+	private JLabel s_snowflakeUrl;
+	private JTextField t_s_snowflakeUrl;
+	private JLabel s_snowflakeUser;
+	private JTextField t_s_snowflakeUser;
+	private JLabel s_snowflakePwd;
+	private JTextField t_s_snowflakePwd;
 
 	public DCToolFrame() {
 
 		setTitle("SDC Automation Tool");
-		setBounds(200, 90, 900, 500);
+		setBounds(150, 100, 1000, 500);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setResizable(false);
 
@@ -94,6 +106,43 @@ public class DCToolFrame extends JFrame implements ActionListener {
 		t_target_sql.setLocation(200, 190);
 		c.add(t_target_sql);
 
+		s_snowflakeUrl = new JLabel("URL : ");
+		s_snowflakeUrl.setFont(new Font("Arial", Font.PLAIN, 15));
+		s_snowflakeUrl.setSize(100, 20);
+		s_snowflakeUrl.setLocation(350, 90);
+		c.add(s_snowflakeUrl);
+
+		t_s_snowflakeUrl = new JTextField();
+		t_s_snowflakeUrl.setFont(new Font("Arial", Font.PLAIN, 15));
+		t_s_snowflakeUrl.setSize(100, 20);
+		t_s_snowflakeUrl.setLocation(400, 90);
+		c.add(t_s_snowflakeUrl);
+
+		s_snowflakeUser = new JLabel("User Name : ");
+		s_snowflakeUser.setFont(new Font("Arial", Font.PLAIN, 15));
+		s_snowflakeUser.setSize(100, 20);
+		s_snowflakeUser.setLocation(510, 90);
+		c.add(s_snowflakeUser);
+
+		t_s_snowflakeUser = new JTextField();
+		t_s_snowflakeUser.setFont(new Font("Arial", Font.PLAIN, 15));
+		t_s_snowflakeUser.setSize(100, 20);
+		t_s_snowflakeUser.setLocation(600, 90);
+		c.add(t_s_snowflakeUser);
+
+		s_snowflakePwd = new JLabel("Password : ");
+		s_snowflakePwd.setFont(new Font("Arial", Font.PLAIN, 15));
+		s_snowflakePwd.setSize(100, 20);
+		s_snowflakePwd.setLocation(720, 90);
+		c.add(s_snowflakePwd);
+
+		t_s_snowflakePwd = new JTextField();
+		t_s_snowflakePwd.setFont(new Font("Arial", Font.PLAIN, 15));
+		t_s_snowflakePwd.setSize(100, 20);
+		t_s_snowflakePwd.setLocation(800, 90);
+		c.add(t_s_snowflakePwd);
+		
+
 		submit = new JButton("Submit");
 		submit.setFont(new Font("Arial", Font.PLAIN, 15));
 		submit.setSize(100, 20);
@@ -107,7 +156,7 @@ public class DCToolFrame extends JFrame implements ActionListener {
 		reset.setLocation(450, 240);
 		reset.addActionListener(this);
 		c.add(reset);
-		
+
 		result_label = new JLabel("Result : ");
 		result_label.setFont(new Font("Arial", Font.BOLD, 20));
 		result_label.setSize(100, 20);
@@ -122,6 +171,7 @@ public class DCToolFrame extends JFrame implements ActionListener {
 		c.add(result_actual);
 
 		setVisible(true);
+
 	}
 
 	public void actionPerformed(ActionEvent e) {
@@ -129,12 +179,17 @@ public class DCToolFrame extends JFrame implements ActionListener {
 		if (e.getSource() == submit) {
 
 			try {
-				DbDecide.dbSelect((String) c_source_db.getSelectedItem(), (String) c_target_db.getSelectedItem());
+				DbDecide.dbSelect((String) c_source_db.getSelectedItem(), (String) c_target_db.getSelectedItem(),
+						t_s_snowflakeUrl.getText(), t_s_snowflakeUser.getText(), t_s_snowflakePwd.getText());
 				result_actual.setText(DbManager.dataCompare(t_source_sql.getText(), t_target_sql.getText()));
-			} catch (ClassNotFoundException e1) {
+			}
+
+			catch (ClassNotFoundException e1) {
 
 				e1.printStackTrace();
-			} catch (SQLException e1) {
+			}
+
+			catch (SQLException e1) {
 
 				e1.printStackTrace();
 			}

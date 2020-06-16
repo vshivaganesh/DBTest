@@ -67,14 +67,20 @@ public class DbManager {
 
 	}
 
-	public static void setSnowflakeDbConnection(String sourceDb, String targetDb)
-			throws SQLException, ClassNotFoundException {
+	public static void setSnowflakeDbConnection(String sourceDb, String targetDb, String url, String username,
+			String password) throws SQLException, ClassNotFoundException {
 
 		try {
 
 			Class.forName(TestConfig.snowflakeDriver);
-			snowflakecon = DriverManager.getConnection(TestConfig.snowflakeUrl, TestConfig.snowflakeUsername,
-					TestConfig.snowflakePassword);
+			/*
+			 * snowflakecon = DriverManager.getConnection(TestConfig.snowflakeUrl,
+			 * TestConfig.snowflakeUsername, TestConfig.snowflakePassword);
+			 */
+
+			snowflakecon = DriverManager.getConnection("jdbc:snowflake://" + url + ".snowflakecomputing.com/", username,
+					password);
+
 			if (!snowflakecon.isClosed()) {
 				System.out.println("Successfully connected to snowflake server");
 				if (sourceDb == "Snowflake")
